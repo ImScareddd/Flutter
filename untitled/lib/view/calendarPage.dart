@@ -14,6 +14,7 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   List<String> strList = ["나무톤 참석", "인프런 머신러닝 섹션 6수강", "진아 점심 약속", "말과글 발표"];
+  List<bool> boolList = [false, false, false, false];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +22,6 @@ class _CalendarPageState extends State<CalendarPage> {
         child: Column(
           children: [
             calendar(),
-            const Divider(),
             todoList(3),
           ],
         ),
@@ -87,18 +87,18 @@ class _CalendarPageState extends State<CalendarPage> {
     return Column(
       children: [
         ListTile(
-          leading: const Icon(
-            Icons.circle,
-            color: Color(0xFF5db075),
+          leading: IconButton(
+            onPressed: () {
+              setState(() {
+                boolList[i] = !boolList[i];
+              });
+            },
+            icon: Icon(Icons.circle),
+            color: boolList[i] ? Color(0xFF5db075) : Color(0xFFBDBDBD),
           ),
           title: Text(
             strList[i],
             style: AppDefault.smallBoldText,
-            // style: const TextStyle(
-            //   fontSize: 15,
-            //   fontFamily: 'Noto_Sans',
-            //   fontWeight: FontWeight.bold,
-            // ),
           ),
         ),
         const Divider(),
@@ -122,5 +122,37 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  void onPlusButtonTap() {}
+  void onPlusButtonTap() {
+    _dialogBuilder(context);
+  }
+
+  Future<void> _dialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('TODO'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('오늘의 할 일을 입력해주세요.'),
+              TextField(),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

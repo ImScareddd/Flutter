@@ -40,6 +40,34 @@ class AppDefault {
     fontWeight: FontWeight.bold,
   );
 
+  //for Single day font title text
+  static TextStyle titleSDText = const TextStyle(
+    fontSize: 45,
+    fontFamily: 'Single_Day',
+    fontWeight: FontWeight.bold,
+  );
+
+  //for Single day font mid text
+  static TextStyle midSDText = const TextStyle(
+    fontSize: 30,
+    fontFamily: 'Single_Day',
+    fontWeight: FontWeight.bold,
+  );
+
+  //for Single day font small text
+  static TextStyle smallSDText = const TextStyle(
+    fontSize: 18,
+    fontFamily: 'Single_Day',
+    fontWeight: FontWeight.normal,
+  );
+
+  //for Single day font small text
+  static TextStyle smallBoldSDText = const TextStyle(
+    fontSize: 18,
+    fontFamily: 'Single_Day',
+    fontWeight: FontWeight.bold,
+  );
+
   //for Noto_Sans_KR title text
   static TextStyle titleKRText = const TextStyle(
     fontSize: 45,

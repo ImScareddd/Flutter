@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/data/provider/dioEx.dart';
 
 import 'constant/appDefault.dart';
 
@@ -13,21 +14,24 @@ class _TestPageState extends State<TestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          exMidText(),
-          exSmallText(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              exSmallButton(context),
-              Container(
-                width: 20,
-              ),
-              exSmallButton(context)
-            ],
-          ),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            exMidText(),
+            exSmallText(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                exSmallButton(context),
+                Container(
+                  width: 20,
+                ),
+                exSmallButton(context)
+              ],
+            ),
+            dioexButton(),
+          ],
+        ),
       ),
     );
   }
@@ -54,6 +58,21 @@ class _TestPageState extends State<TestPage> {
         onPressed: () {
           ScaffoldMessenger.of(context)
               .showSnackBar(AppDefault.snackBar('NAMUNAMUNAMU'));
+        },
+        style: AppDefault.smallButton,
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget dioexButton() {
+    return SizedBox(
+      width: AppDefault.width * 0.15,
+      height: AppDefault.width * 0.15,
+      child: ElevatedButton(
+        onPressed: () {
+          var dioex = DioEx();
+          dioex.postEx();
         },
         style: AppDefault.smallButton,
         child: const Icon(Icons.add),

@@ -2,27 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:untitled/constant/appDefault.dart';
 import 'package:get/get.dart';
-import 'package:untitled/controller/loginData.dart';
+import 'package:untitled/controller/LoginDataController.dart';
 import 'package:untitled/view/bottomNavigationBarPage.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
   @override
   Widget build(BuildContext context) {
-    Get.put(LoginData());
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              Container(height: 30),
-              title(),
-              Container(height: AppDefault.height * 0.25),
-              loginWithGoogleButton(context),
-              Container(height: 30),
-              loginWithGuestButton(context),
-              Container(height: 10),
-            ],
+    Get.put(LoginDataController());
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          color: AppDefault.mainColor.withOpacity(0.25),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // title(),
+                loginWithGoogleButton(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -30,46 +29,59 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget title() {
-    return Text(
-      "Log In",
-      style: AppDefault.titleText,
+    return SizedBox(
+      width: AppDefault.width * 0.9,
+      child: Image.asset(
+        'assets/images/nalang.png',
+        fit: BoxFit.fill,
+      ),
     );
   }
 
   Widget loginWithGoogleButton(context) {
     return SizedBox(
       width: AppDefault.width * 0.9,
-      child: ElevatedButton(
-        onPressed: () => googleLogin(context),
-        style: AppDefault.bigButton,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset('assets/images/glogo.png'),
-            Text('Login with Google', style: AppDefault.smallText),
-            Opacity(
-                opacity: 0.0, child: Image.asset('assets/images/glogo.png')),
-          ],
+      height: 50,
+      child: InkWell(
+        onTap: () => googleLogin(context),
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.asset(
+                'assets/images/glogo.png',
+                width: 40,
+                height: 40,
+                fit: BoxFit.fill,
+              ),
+              Text('Start with Google',
+                  style: TextStyle(
+                    color: AppDefault.mainColor,
+                    fontSize: 16,
+                    fontFamily: 'Noto_Sans',
+                    fontWeight: FontWeight.bold,
+                  )),
+              const Icon(
+                Icons.arrow_forward_ios_sharp,
+                size: 35,
+              )
+            ],
+          ),
         ),
       ),
-    );
-  }
-
-  Widget loginWithGuestButton(context) {
-    return SizedBox(
-      width: AppDefault.width * 0.9,
-      child: ElevatedButton(
-        onPressed: () => guestLogin(context),
-        style: AppDefault.bigButton,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            const Icon(Icons.person, size: 30),
-            Text('Login with Guest', style: AppDefault.smallText),
-            const Opacity(opacity: 0.0, child: Icon(Icons.person, size: 30)),
-          ],
-        ),
-      ),
+      // child: ElevatedButton(
+      //   onPressed: () => googleLogin(context),
+      //   style: AppDefault.bigButton,
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //     children: [
+      //       Image.asset('assets/images/glogo.png'),
+      //       Text('Start with Google', style: AppDefault.smallText),
+      //       Opacity(
+      //           opacity: 0.0, child: Image.asset('assets/images/glogo.png')),
+      //     ],
+      //   ),
+      // ),
     );
   }
 
@@ -105,7 +117,7 @@ class LoginPage extends StatelessWidget {
       ScaffoldMessenger.of(context)
           .showSnackBar(AppDefault.snackBar('등록되지 않은 테스트 계정입니다.'));
     }
-    Get.find<LoginData>().setAccount(account!);
+    Get.find<LoginDataController>().setAccount(account!);
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
   }

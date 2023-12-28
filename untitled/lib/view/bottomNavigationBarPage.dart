@@ -33,16 +33,16 @@ class _BottomNavigationBarPageState extends State<BottomNavigationBarPage> {
           destinations: const <Widget>[
             NavigationDestination(
               icon: Icon(Icons.note_alt),
-              label: '',
+              label: 'RECORD',
             ),
             NavigationDestination(
               // selectedIcon: Icon(Icons.home),
               icon: Icon(Icons.home),
-              label: '',
+              label: 'HOME',
             ),
             NavigationDestination(
               icon: Icon(Icons.messenger_sharp),
-              label: '',
+              label: 'QUIZ',
             ),
           ],
         ),
