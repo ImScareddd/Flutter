@@ -42,6 +42,7 @@ dependencies:
     flutter_native_splash: ^2.3.8
     timelines: ^0.1.0
     syncfusion_flutter_charts: ^24.1.43
+    flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
     flutter_test:
@@ -69,6 +70,7 @@ flutter:
         - assets/images/glogo.png
         - assets/images/nalang.png
         - assets/images/splash.png
+        - assets/images/placeholder.gif
 
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware

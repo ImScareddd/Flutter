@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:untitled/constant/appDefault.dart';
 import 'package:get/get.dart';
-import 'package:untitled/controller/LoginDataController.dart';
+import 'package:untitled/controller/loginDataController.dart';
+import 'package:untitled/data/provider/dioLogin.dart';
 import 'package:untitled/view/bottomNavigationBarPage.dart';
 
 class LoginPage extends StatelessWidget {
@@ -10,6 +11,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(LoginDataController());
+    googleLogout();
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -69,33 +71,24 @@ class LoginPage extends StatelessWidget {
           ),
         ),
       ),
-      // child: ElevatedButton(
-      //   onPressed: () => googleLogin(context),
-      //   style: AppDefault.bigButton,
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //     children: [
-      //       Image.asset('assets/images/glogo.png'),
-      //       Text('Start with Google', style: AppDefault.smallText),
-      //       Opacity(
-      //           opacity: 0.0, child: Image.asset('assets/images/glogo.png')),
-      //     ],
-      //   ),
-      // ),
     );
   }
 
-  void guestLogin(context) async {
-    // const List<String> scopes = <String>[
-    //   'email',
-    //   'https://www.googleapis.com/auth/contacts.readonly',
-    // ];
+  void googleLogout() async {
+    const List<String> scopes = <String>[
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ];
 
-    // GoogleSignIn _googleSignIn = GoogleSignIn(scopes: scopes);
-    // GoogleSignInAccount? a = await _googleSignIn.signOut();
-    // print(a.toString());
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
+    GoogleSignIn _googleSignIn = GoogleSignIn(scopes: scopes);
+    GoogleSignInAccount? a;
+    try {
+      a = await _googleSignIn.signOut();
+    } catch (e) {}
+
+    print(a.toString());
+    // Navigator.push(context,
+    //     MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
   }
 
   void googleLogin(context) async {
@@ -116,8 +109,11 @@ class LoginPage extends StatelessWidget {
     if (account == null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(AppDefault.snackBar('등록되지 않은 테스트 계정입니다.'));
+      return;
     }
-    Get.find<LoginDataController>().setAccount(account!);
+    DioLogin dioLogin = DioLogin();
+    dioLogin.post(account.displayName!, account.email, account.id);
+    Get.find<LoginDataController>().setAccount(account);
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
   }

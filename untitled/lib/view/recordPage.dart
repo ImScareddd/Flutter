@@ -10,6 +10,8 @@ class RecordPage extends StatefulWidget {
 }
 
 class _RecordPageState extends State<RecordPage> {
+  int num = 2;
+  bool isPictureReceived = false;
   List<String> strList = [
     "2023.12.28 11시 35분",
     "진아 점심 약속",
@@ -19,7 +21,7 @@ class _RecordPageState extends State<RecordPage> {
     "아 오늘 아이스 브레이킹을 하는데 가위바위보를 져서 발표를 하게 되었다. 진짜 이길 수 있었는데 아깝다. 그래도 발표 후에 아이스 브레이킹 한 부분은 다 기억해서 가산점을 받을 수 있었다."
   ];
   String src =
-      "https://mblogthumb-phinf.pstatic.net/MjAyMDA2MzBfMTc5/MDAxNTkzNDc1NTM1Mjk0.YlmNikHXs16erkjED8Y-3EeYGL3_dAEMNaduCVdfTK4g.jDt5YzFaXmZpJgbdruUWgfXLzXbu1gRcg_GBvFMWzSog.JPEG.aidedu/%EF%BB%BFPresentation(%ED%94%84%EB%A0%88%EC%A0%A0%ED%85%8C%EC%9D%B4%EC%85%98)_%EC%B2%AD%EC%A4%91%EC%9D%98_%EA%B8%8D%EC%A0%95%EC%A0%81%EC%9D%B8_%EB%B0%98%EC%9D%91%EC%9D%84_%EC%9D%B4%EB%81%8C%EC%96%B4_%EB%82%B4%EB%9D%BC_%ED%94%84%EB%A6%AC%EC%A0%A0%ED%85%8C%EC%9D%B4%EC%85%98,_PT,_%EB%B0%9C%ED%91%9C,_PPT,_%EC%A0%9C%EC%95%88%EC%84%9C,_%EC%A0%9C%EC%95%88%EC%84%A4%EB%AA%85%ED%9A%8C,_%EC%97%90.jpg?type=w800";
+      "https://firebasestorage.googleapis.com/v0/b/flutter-dbcbd.appspot.com/o/KakaoTalk_Photo_2023-12-29-05-48-53.png?alt=media&token=b1d30f6a-fc44-40dd-a2bd-6747a11a9ce4";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,23 +30,98 @@ class _RecordPageState extends State<RecordPage> {
           child: Column(
             children: [
               Container(height: 20),
-              Container(
-                width: AppDefault.width * 0.9,
-                height: AppDefault.width * 0.55,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(src),
-                  ),
-                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                ),
-              ),
+              isPictureReceived
+                  ? Container(
+                      width: AppDefault.width * 0.9,
+                      height: AppDefault.width * 0.55,
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/images/placeholder.gif',
+                          image: src,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    )
+                  : InkWell(
+                      onTap: () => setState(() {
+                        isPictureReceived = true;
+                      }),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: AppDefault.width * 0.9,
+                            height: AppDefault.width * 0.55,
+                            decoration: const BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8.0)),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: AppDefault.width * 0.45 - 25,
+                                top: AppDefault.width * 0.275 - 25),
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 50,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
               Container(height: 20),
               timeLine(),
+              addRecordButton(),
+              Container(height: 20),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _dialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Record'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('일기를 기록해주세요.'),
+              TextField(),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('확인'),
+              onPressed: () {
+                setState(() {
+                  num++;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget addRecordButton() {
+    return ElevatedButton(
+      onPressed: () => _dialogBuilder(context),
+      child: Icon(Icons.add),
+      style: AppDefault.smallButton,
     );
   }
 
@@ -59,7 +136,7 @@ class _RecordPageState extends State<RecordPage> {
         builder: TimelineTileBuilder.fromStyle(
           contentsAlign: ContentsAlign.basic,
           contentsBuilder: (context, index) => timeLineListTile(index),
-          itemCount: 3,
+          itemCount: num,
         ),
       ),
     );

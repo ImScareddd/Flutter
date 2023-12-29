@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:untitled/constant/appDefault.dart';
+import 'package:untitled/controller/loginDataController.dart';
+import 'package:untitled/controller/toDoListController.dart';
+import 'package:untitled/data/model/toDoListNode.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -12,17 +17,21 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
+
   DateTime? _selectedDay;
-  List<String> strList = ["나무톤 참석", "인프런 머신러닝 섹션 6수강", "진아 점심 약속", "말과글 발표"];
-  List<bool> boolList = [false, false, false, false];
   @override
   Widget build(BuildContext context) {
+    Get.put(ToDoListController());
+    Get.find<ToDoListController>()
+        .setToDoListNodeList(DateFormat('yyyy-MM-dd').format(DateTime.now()));
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             calendar(),
-            todoList(3),
+            GetBuilder<ToDoListController>(
+              builder: (controller) => todoList(controller),
+            )
           ],
         ),
       ),
@@ -53,6 +62,8 @@ class _CalendarPageState extends State<CalendarPage> {
       calendarFormat: _calendarFormat,
       selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
       onDaySelected: (selectedDay, focusedDay) {
+        Get.find<ToDoListController>()
+            .setToDoListNodeList(DateFormat('yyyy-MM-dd').format(selectedDay));
         print("selected date: " + selectedDay.toString());
         setState(() {
           _selectedDay = selectedDay;
@@ -72,32 +83,40 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  Widget todoList(int _itemCount) {
-    int itemCount = _itemCount + 1;
+  Widget todoList(ToDoListController controller) {
+    int itemCount = controller.toDoList.length + 1;
     return Expanded(
       child: ListView.builder(
-        itemBuilder: (c, i) =>
-            i == itemCount - 1 ? plusButton() : todoListTile(i),
+        itemBuilder: (c, i) => i == itemCount - 1
+            ? plusButton(controller)
+            : todoListTile(i, controller),
         itemCount: itemCount,
       ),
     );
   }
 
-  Widget todoListTile(int i) {
+  Widget todoListTile(int i, ToDoListController controller) {
     return Column(
       children: [
         ListTile(
           leading: IconButton(
             onPressed: () {
-              setState(() {
-                boolList[i] = !boolList[i];
-              });
+              controller.setToDoListNodeBool(
+                  i,
+                  _selectedDay == null
+                      ? DateFormat('yyyy-MM-dd').format(_focusedDay)
+                      : DateFormat('yyyy-MM-dd').format(_selectedDay!),
+                  controller.toDoList[i].todo,
+                  DateTime.now().toString());
+              // setState(() {});
             },
             icon: Icon(Icons.circle),
-            color: boolList[i] ? Color(0xFF5db075) : Color(0xFFBDBDBD),
+            color: controller.toDoList[i].isFinished
+                ? Color(0xFF5db075)
+                : Color(0xFFBDBDBD),
           ),
           title: Text(
-            strList[i],
+            controller.toDoList[i].todo,
             style: AppDefault.smallBoldText,
           ),
         ),
@@ -106,7 +125,7 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  Widget plusButton() {
+  Widget plusButton(ToDoListController controller) {
     return Column(
       children: [
         ListTile(
@@ -114,7 +133,7 @@ class _CalendarPageState extends State<CalendarPage> {
             Icons.add,
             size: 40,
           ),
-          onTap: () => onPlusButtonTap(),
+          onTap: () => onPlusButtonTap(controller),
         ),
         const Divider(),
         const ListTile(),
@@ -122,11 +141,13 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  void onPlusButtonTap() {
-    _dialogBuilder(context);
+  void onPlusButtonTap(ToDoListController controller) {
+    _dialogBuilder(context, controller);
   }
 
-  Future<void> _dialogBuilder(BuildContext context) {
+  Future<void> _dialogBuilder(
+      BuildContext context, ToDoListController controller) {
+    TextEditingController textEditingController = TextEditingController();
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -137,7 +158,7 @@ class _CalendarPageState extends State<CalendarPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('오늘의 할 일을 입력해주세요.'),
-              TextField(),
+              TextField(controller: textEditingController),
             ],
           ),
           actions: <Widget>[
@@ -147,6 +168,11 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               child: const Text('확인'),
               onPressed: () {
+                controller.addToDoListNode(
+                    _selectedDay == null
+                        ? DateFormat('yyyy-MM-dd').format(_focusedDay)
+                        : DateFormat('yyyy-MM-dd').format(_selectedDay!),
+                    textEditingController.text);
                 Navigator.of(context).pop();
               },
             ),

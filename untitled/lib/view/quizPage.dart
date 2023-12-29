@@ -175,7 +175,7 @@ class _QuizPageState extends State<QuizPage> {
     print(textEditingControllerList[0].text);
     print(textEditingControllerList[1].text);
     print(textEditingControllerList[2].text);
-    _showMyDialog(98);
+    _showMyDialog(100);
   }
 
   Future<void> _showMyDialog(int score) async {
